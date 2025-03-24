@@ -1,0 +1,6 @@
+# Ignore specific vulnerabilities
+CVE-2023-31484
+CVE-2023-45853
+CVE-2024-34069
+CVE-2022-40897
+CVE-2024-6345

@@ -1,0 +1,92 @@
+name: Build, Scan, and Push Docker Image to ECR
+
+on:
+  push:
+    branches:
+      - main  # main ブランチにプッシュされたときにトリガー
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # ソースコードをチェックアウト
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # AWS認証設定
+    - name: Set up AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    # Docker Buildx をセット
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    # Dockerイメージのビルド
+    - name: Build Docker image
+      run: |
+        docker build -t flask-hello-world:${{ github.sha }} -f app/Dockerfile .
+        docker tag flask-hello-world:${{ github.sha }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPO }}:${{ github.sha }}
+
+    # Lintチェック
+    - name: Run Lint check with flake8
+      run: |
+        pip install flake8
+        flake8 app/ --max-line-length=80
+
+    # ユニットテスト
+    - name: Run unit tests with pytest
+      run: |
+        pip install -r app/requirements.txt
+        export PYTHONPATH=app
+        pip install pytest
+        pytest app/tests --maxfail=1 --disable-warnings -q
+
+    # Trivy を使ってイメージのスキャン
+    - name: Scan Docker image with Trivy
+      run: |
+        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src aquasec/trivy:latest image --ignorefile /src/.trivyignore --exit-code 1 --severity HIGH,CRITICAL flask-hello-world:${{ github.sha }}
+      continue-on-error: false  # 高セキュリティリスクが検出された場合にパイプラインを停止
+
+    # bandit を使って Python セキュリティチェック
+    - name: Run Bandit security scan on Python code
+      run: |
+        pip install bandit
+        bandit -r . -x tests
+      continue-on-error: false  # セキュリティリスクが検出された場合にパイプラインを停止
+
+    # ECR にログイン
+    - name: Log in to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v1
+
+    # Docker イメージを ECR にプッシュ
+    - name: Push Docker image to ECR
+      run: |
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPO }}:${{ github.sha }}
+
+    # イメージの URL を出力
+    - name: Output image URL
+      run: |
+        echo "ECR Image URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPO }}:${{ github.sha }}"
+        echo "ECR_IMAGE_URL=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_REPO }}:${{ github.sha }}" >> $GITHUB_ENV
+
+    # EKS クラスターに接続
+    - name: Configure kubectl to use EKS cluster
+      run: |
+        aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }}
+
+    # KubernetesのDeploymentを適用
+    - name: Deploy to EKS
+      run: |
+        envsubst < infra/modules/ci_cd/k8s/deployment.yaml | kubectl apply -f -
+        kubectl apply -f infra/modules/ci_cd/k8s/service.yaml
+
+    # デプロイ結果の確認
+    - name: Check Kubernetes resources
+      run: |
+        kubectl get pods
+        kubectl get svc
