@@ -248,6 +248,13 @@ $ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizar
 1. **リポジトリのクローンと環境変数の設定**
    - 最初に、GitHubリポジトリを`git clone`でローカルにクローンします。
    - クローンしたリポジトリで、必要な環境変数を設定します。AWSの認証情報やEKS設定に必要な情報は、GitHubの**Secrets**に設定し、CI/CDパイプラインで環境変数として使用します。
+   
+     **AWS認証情報の設定方法:**
+    ローカル環境でAWS CLIを使ってデプロイを行う場合、以下のコマンドでAWS認証情報を設定します。
+      ```bash
+      export AWS_ACCESS_KEY_ID="<your-access-key-id>"
+      export AWS_SECRET_ACCESS_KEY="<your-secret-access-key>"
+      ```
 
      **GitHub Secretsの設定方法:**
      1. GitHubリポジトリの「Settings」 > 「Secrets」 > 「New repository secret」から、新しいシークレットを追加します。
