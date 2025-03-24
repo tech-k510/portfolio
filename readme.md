@@ -1,5 +1,3 @@
-# **ポートフォリオ**
-
 ## 目次
 - [1. はじめに](#1-はじめに)
   - [ポートフォリオの目的](#ポートフォリオの目的)
@@ -256,7 +254,7 @@ $ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizar
      2. 以下の環境変数を追加します：
         - `AWS_ACCESS_KEY_ID`：AWSのアクセスキーID
         - `AWS_SECRET_ACCESS_KEY`：AWSのシークレットアクセスキー
-        - `AWS_ACCOUNT_ID`：AWSアカウントID
+        - `AWS_ACCOUNT_ID`：AWSアカウントID (ハイフン無しの12桁)
         - `AWS_ECR_REPO`：ECRのリポジトリ名（事前にECRを作成してください）
         - `AWS_REGION`：AWSリージョン（ap-northeast-1）
         - `EKS_CLUSTER_NAME`：EKSクラスタ名（my-eks-cluster）
@@ -392,55 +390,30 @@ http://a092037b8579541e2bc83f10f5d4bb17-1970297572.ap-northeast-1.elb.amazonaws.
 以下のリンクは、参考にした記事です。
 
 ### **Terraform関連**
-
+- [AWS CLIをHomebrewでインストールする](https://zenn.dev/akakuro/articles/30f570b8863bef)
 - [TerraformでVPCを作成する方法（AWS）](https://qiita.com/kakita-yzrh/items/cccf954daaa3de59d370)  
-  AWSにおけるVPCの作成方法を学ぶための基本的なガイドです。
-
 - [TerraformでAWS EKSインフラを構築する](https://qiita.com/snow_easy/items/6376d00e9521383934cc)  
-  AWS上でTerraformを用いてEKSのインフラ構築を行う方法を解説しています。
 
 ### **AWS EKS関連**
 
 - [AWS EKS クラスタ作成方法](https://www.niandc.co.jp/tech/20230804_37557/)  
-  AWS EKSクラスタの作成手順について詳細に解説された資料です。
-
 - [Terraformを使ってEKSを構築する](https://techblog.ap-com.co.jp/entry/2018/12/06/141104)  
-  Terraformを使ったEKS構築の具体的な手順と事例を紹介しています。
-
-- [AWS EKS セキュリティベストプラクティス](https://qiita.com/FumiSOULs/items/43cd6fbf56ecd32e5b34)  
-  EKSを利用する際のセキュリティのベストプラクティスについて解説しています。
-
-- [ECR DockerイメージをEKSにデプロイする方法](https://qiita.com/FumiSOULs/items/43cd6fbf56ecd32e5b34)  
-  ECRに保存したDockerイメージをEKSにデプロイする手順を紹介しています。
-
-- [EKS Podの健康チェックとKubernetes設定](https://qiita.com/FumiSOULs/items/43cd6fbf56ecd32e5b34)  
-  EKSでのPodの健康チェック設定とKubernetesにおける管理方法を学べます。
-
-- [GitHub ActionsでCI/CDパイプラインを設定する](https://qiita.com/FumiSOULs/items/43cd6fbf56ecd32e5b34)  
-  GitHub Actionsを使ったCI/CDパイプラインの設定方法が解説されています。
 
 ### **Flaskアプリケーション関連**
 
 - [FlaskアプリケーションをDockerでコンテナ化する方法](https://qiita.com/RyutoYoda/items/c260d3a1067ff853b18e)  
-  FlaskアプリケーションをDockerコンテナとして実行する手順を解説した記事です。
 
-- [Kubernetes上にFlaskアプリケーションをEKSでデプロイする方法](https://qiita.com/RyutoYoda/items/c260d3a1067ff853b18e)  
-  Kubernetes上でFlaskアプリケーションをデプロイするための手順を解説しています。
+### CI/CD関連
+
+- [GitHub ActionsでCI/CDパイプラインを設定する](https://qiita.com/FumiSOULs/items/43cd6fbf56ecd32e5b34)  
+- [Github ActionsでEKSにコンテナをデプロイする](https://www.tsuchiya.blog/deploy-to-eks-by-github-actions/)  
+
 
 ### **セキュリティ関連**
 
 - [Trivyでコンテナイメージの脆弱性スキャンを行う方法](https://tech-lab.sios.jp/archives/38680)  
-  コンテナイメージの脆弱性をスキャンするためのツールTrivyの設定方法について解説しています。
-
-- **Banditを使ったPythonのセキュリティスキャン**  
-  Pythonコードのセキュリティスキャンを行うためのツールBanditの使用方法を解説します。
-
-- [AWS IAMポリシーの最小権限設定](https://qiita.com)  
-  IAMポリシーの最小権限設定に関するベストプラクティスや実践方法を学べます。
-
-- [AWS WAFでWebアプリケーションファイアウォールを設定する方法](https://qiita.com)  
-  AWS WAFの設定方法と、Webアプリケーションを保護するための手順が紹介されています。
-
+- [CI Workflow Utilizando Github Actions. Parte 1 - SAST com Bandit](https://doretox.com/posts/ci-githubactions/)  
+- [Amazon EKSベストプラクティスガイド (セキュリティ編)](https://dev.classmethod.jp/articles/decipher-amazon-eks-best-practices-guide-for-security-part1/)  
 
 ---
 
