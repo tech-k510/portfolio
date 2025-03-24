@@ -57,7 +57,7 @@ jobs:
       run: |
         pip install bandit
         bandit -r . -x tests
-      continue-on-error: false  # セキュリティリスクが検出された場合にパイプライン停止
+      continue-on-error: false  # セキュリティリスクが検出された場合にパイプラインを停止
 
     # ECR にログイン
     - name: Log in to Amazon ECR
